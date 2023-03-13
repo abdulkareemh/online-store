@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ECommerce\ShopController;
+use App\Http\Controllers\HomeController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,29 +15,32 @@ use App\Http\Controllers\ECommerce\ShopController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/hh',function ()
+{
+return auth::user();
+})->middleware('verified');
 
-Auth::routes();
+Auth::routes(['verify'=>true]);
 Route::middleware(['admin'])->prefix('dashboard')->group(function () {
-   Route::get('/', [App\Http\Controllers\HomeController::class, 'root'])->name('root');
-
-
-
-   Route::get('{any}', [App\Http\Controllers\HomeController::class, 'index'])->name('/index');
+   Route::get('/', [HomeController::class,'root'])->name('root');
+   Route::get('{any}', [HomeController::class, 'index'])->name('/index');
 
    //Language Translation
 });
-Route::get('index/{locale}', [App\Http\Controllers\HomeController::class, 'lang']);
+Route::get('index/{locale}', [HomeController::class, 'lang']);
 
 //Update User Details
-Route::post('/update-profile/{id}', [App\Http\Controllers\HomeController::class, 'updateProfile'])->name('updateProfile');
-Route::post('/update-password/{id}', [App\Http\Controllers\HomeController::class, 'updatePassword'])->name('updatePassword');
+Route::post('/update-profile/{id}', [HomeController::class, 'updateProfile'])->name('updateProfile');
+Route::post('/update-password/{id}', [HomeController::class, 'updatePassword'])->name('updatePassword');
 
 
 Route::get('/', [ShopController::class, 'index']);
 Route::get('/products', function (){
    return  view('eCommerce/products');
 });
-
+Route::get('/test',function(){
+    return view('Admin.dashboard');
+});
 
 // Route::prefix('ecommerce')->group(function () {
 //    Route::get('{any}', [App\Http\Controllers\ecommerce\ShopController::class, 'index']);
